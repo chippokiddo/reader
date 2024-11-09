@@ -1,5 +1,7 @@
 # reader
 
+![reader icon](./Assets.xcassets/AppIcon.appiconset/256x256.png)
+
 reader is a simple app designed for personal use and shared with friends to keep track of books in various reading stages and to add favorite quotes and notes from books.
 
 ## Features

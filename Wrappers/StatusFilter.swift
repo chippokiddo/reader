@@ -1,0 +1,41 @@
+import SwiftUI
+
+enum StatusFilter: String, CaseIterable, Identifiable {
+    case all = "All"
+    case unread = "Unread"
+    case reading = "Reading"
+    case read = "Read"
+    case deleted = "Deleted"
+    
+    var id: String { rawValue }
+    
+    var iconName: String {
+        switch self {
+        case .all:
+            return "books.vertical.fill"
+        case .unread:
+            return "book"
+        case .reading:
+            return "book.fill"
+        case .read:
+            return "book.fill"
+        case .deleted:
+            return "trash.fill"
+        }
+    }
+    
+    var iconColor: Color {
+        switch self {
+        case .all:
+            return .purple.opacity(0.8)
+        case .unread:
+            return .gray
+        case .reading:
+            return .blue.opacity(0.7)
+        case .read:
+            return .green.opacity(0.7)
+        case .deleted:
+            return .red.opacity(0.7)
+        }
+    }
+}

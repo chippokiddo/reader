@@ -77,7 +77,7 @@ final class DataManager: ObservableObject {
         isbn: String? = nil,
         publisher: String? = nil,
         published: Date?,
-        description: String? = nil  // New description parameter
+        description: String? = nil
     ) {
         guard let published = published else { return }
         
@@ -89,7 +89,7 @@ final class DataManager: ObservableObject {
             genre: genre,
             series: series,
             isbn: isbn,
-            bookDescription: description,  // Set bookDescription here
+            bookDescription: description,
             status: .unread
         )
         

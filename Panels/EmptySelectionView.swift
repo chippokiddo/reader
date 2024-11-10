@@ -3,7 +3,7 @@ import SwiftUI
 struct EmptySelectionView: View {
     var body: some View {
         VStack(spacing: 10) {
-            Image(systemName: "book.closed")
+            Image(systemName: "book.pages")
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
             Text("Select a book to view details")

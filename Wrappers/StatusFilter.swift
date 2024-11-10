@@ -12,15 +12,15 @@ enum StatusFilter: String, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .all:
-            return "books.vertical.fill"
+            return "books.vertical"
         case .unread:
-            return "book"
+            return "book.closed"
         case .reading:
-            return "book.fill"
+            return "book"
         case .read:
-            return "book.fill"
+            return "book.closed"
         case .deleted:
-            return "trash.fill"
+            return "trash"
         }
     }
     

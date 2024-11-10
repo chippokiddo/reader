@@ -7,6 +7,7 @@ struct NotesSection: View {
     @State private var newPageNumber: String = ""
     @State private var isEditing: Bool = false
     @State private var isAddingNote: Bool = false
+    @State private var isCollapsed: Bool = false
     var modelContext: ModelContext
 
     // Computed property to work with notes as an array
@@ -17,82 +18,90 @@ struct NotesSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Notes")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                // Collapsible toggle icon
+                Button(action: { isCollapsed.toggle() }) {
+                    HStack {
+                        Image(systemName: isCollapsed ? "chevron.right" : "chevron.down")
+                            .font(.body)
+                        Text("Notes")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                    }
+                }
+                .buttonStyle(PlainButtonStyle())
+                
                 Spacer()
                 
                 Button(isEditing ? "Done" : "Edit") {
-                    withAnimation { isEditing.toggle() }
+                    isEditing.toggle()
                 }
                 .buttonStyle(LinkButtonStyle())
                 .disabled(book.status == .deleted)
             }
             .padding(.bottom, 4)
             
-            // Display notes
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(notesArray, id: \.self) { note in
-                    let components = note.components(separatedBy: " [p. ")
-                    let text = components.first ?? note
-                    let pageNumber = components.count > 1 ? components.last?.replacingOccurrences(of: "]", with: "") : nil
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(alignment: .top) {
-                            Text(text)
-                                .font(.body)
-                                .padding(10)
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(8)
-
-                            Spacer()
-                            
-                            if let page = pageNumber, !page.isEmpty {
-                                Text("p. \(page)")
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
-                                    .padding(8)
+            // Display notes if not collapsed
+            if !isCollapsed {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(notesArray, id: \.self) { note in
+                        let components = note.components(separatedBy: " [p. ")
+                        let text = components.first ?? note
+                        let pageNumber = components.count > 1 ? components.last?.replacingOccurrences(of: "]", with: "") : nil
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(alignment: .top) {
+                                Text(text)
+                                    .font(.body)
+                                    .padding(10)
                                     .background(Color.gray.opacity(0.1))
                                     .cornerRadius(8)
-                            }
 
-                            if isEditing {
-                                Button(action: { withAnimation { removeNote(note) } }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
+                                Spacer()
+                                
+                                if let page = pageNumber, !page.isEmpty {
+                                    Text("p. \(page)")
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+                                        .padding(8)
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(8)
                                 }
-                                .buttonStyle(BorderlessButtonStyle())
-                                .transition(.opacity)
+
+                                if isEditing {
+                                    Button(action: { removeNote(note) }) {
+                                        Image(systemName: "minus.circle.fill")
+                                            .foregroundColor(.red)
+                                    }
+                                    .buttonStyle(BorderlessButtonStyle())
+                                }
                             }
                         }
-                    }
-                    .padding(.vertical, 6)
-                    
-                    if notesArray.last != note {
-                        Divider().padding(.horizontal, 8)
+                        .padding(.vertical, 6)
+                        
+                        if notesArray.last != note {
+                            Divider().padding(.horizontal, 8)
+                        }
                     }
                 }
-            }
-            .padding(.bottom, isEditing ? 6 : 0)
+                .padding(.bottom, isEditing ? 6 : 0)
 
-            if isAddingNote {
-                addNoteForm
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
-            } else {
-                Button(action: { withAnimation { isAddingNote = true } }) {
-                    Label("Add Note", systemImage: "plus.circle")
-                        .font(.callout)
-                        .foregroundColor(.accentColor)
+                if isAddingNote {
+                    addNoteForm
+                } else {
+                    Button(action: { isAddingNote = true }) {
+                        Label("Add Note", systemImage: "plus.circle")
+                            .font(.callout)
+                            .foregroundColor(.accentColor)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .padding(.top, 6)
+                    .disabled(book.status == .deleted)
                 }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.top, 6)
-                .disabled(book.status == .deleted)
             }
         }
         .padding(16)
         .background(Color(NSColor.windowBackgroundColor))
         .cornerRadius(12)
-        .animation(.easeInOut(duration: 0.25), value: isEditing)
     }
     
     // MARK: Note form
@@ -116,13 +125,13 @@ struct NotesSection: View {
 
             HStack {
                 Button("Cancel") {
-                    withAnimation { resetAddNoteForm() }
+                    resetAddNoteForm()
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.trailing, 6)
 
                 Button("Save") {
-                    withAnimation { saveNote() }
+                    saveNote()
                 }
                 .buttonStyle(DefaultButtonStyle())
                 .foregroundColor((newNote.isEmpty || newPageNumber.isEmpty) ? .gray : .accentColor)

@@ -1,6 +1,6 @@
 # reader
 
-![reader icon](./Assets.xcassets/AppIcon.appiconset/256x256.png)
+![reader icon](./reader/Assets.xcassets/AppIcon.appiconset/256x256.png)
 
 reader is a simple book-tracking app I created in SwiftUI for personal use and to share with a friend. It helps keep track of books in different reading stages and lets users save favorite quotes and notes.
 

@@ -18,7 +18,7 @@ reader is a simple book-tracking app I created in SwiftUI for personal use and t
 
 To install, follow these steps:
 
-1. Go to the Releases section of this repository.
+1. Go to the [releases](https://github.com/chippokiddo/reader/releases) section of this repository.
 2. Download the latest `.zip` file containing the **reader** app.
 3. Extract the `.zip` file to access the app.
 4. Move the app to your Applications folder (optional).

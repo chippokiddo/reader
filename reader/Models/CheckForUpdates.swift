@@ -31,9 +31,15 @@ func fetchLatestRelease() async throws -> (String, URL) {
     // Decode the JSON response
     let release = try JSONDecoder().decode(GitHubRelease.self, from: data)
     
-    // Ensure there’s at least one asset (e.g., .zip or .dmg file)
+    // Check if there are assets available
     guard let downloadURL = release.assets.first?.browserDownloadURL else {
-        throw NSError(domain: "No assets available", code: 0, userInfo: nil)
+        // Print the raw JSON response for debugging purposes
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("JSON Response: \(jsonString)")
+        }
+        throw NSError(domain: "GitHubReleaseError", code: 0, userInfo: [
+            NSLocalizedDescriptionKey: "No assets available in the latest release on GitHub."
+        ])
     }
     
     return (release.tagName, downloadURL)
@@ -112,7 +118,7 @@ func checkForUpdates() {
                 print("Already up-to-date.")
             }
         } catch {
-            print("Failed to check or perform update:", error)
+            print("Failed to check or perform update: \(error.localizedDescription)")
         }
     }
 }

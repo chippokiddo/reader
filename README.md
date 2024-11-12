@@ -4,6 +4,8 @@
 
 reader is a simple book-tracking app I created in SwiftUI for personal use and to share with a friend. It helps keep track of books in different reading stages and lets users save favorite quotes and notes.
 
+![Screenshot](./assets/img01.png)
+
 [![Download](https://img.shields.io/badge/download-latest-brightgreen?style=flat-square)](https://github.com/chippokiddo/reader/releases/latest)
 ![Platform](https://img.shields.io/badge/platform-macOS-blue?style=flat-square)
 ![Requirements](https://img.shields.io/badge/requirements-macOS%2014%2B-fa4e49?style=flat-square)

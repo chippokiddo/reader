@@ -18,19 +18,21 @@ struct ToolbarView: View {
         }
         .alert("This will move the book to deleted.", isPresented: $showSoftDeleteConfirmation) {
             Button("Cancel", role: .cancel) {}
-            Button("Delete", role: .destructive) {
+            Button("Delete") {
                 if let book = bookToDelete {
                     viewModel.softDeleteBook(book)
                 }
             }
+            .tint(.blue)
         }
         .alert("This will permanently delete the book. You can't undo this action.", isPresented: $showPermanentDeleteConfirmation) {
             Button("Cancel", role: .cancel) {}
-            Button("Delete", role: .destructive) {
+            Button("Delete") {
                 if let book = bookToDelete {
                     viewModel.permanentlyDeleteBook(book)
                 }
             }
+            .tint(.blue)
         }
     }
     

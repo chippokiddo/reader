@@ -4,7 +4,8 @@ struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var dataManager: DataManager
     @ObservedObject var viewModel: ContentViewModel
-    @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    
+    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
 
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
@@ -28,9 +29,6 @@ struct ContentView: View {
             AddView()
                 .environmentObject(dataManager)
                 .padding()
-                .background(Color(nsColor: .windowBackgroundColor))
-        }
-        .onChange(of: viewModel.selectedBook) {
         }
     }
 }

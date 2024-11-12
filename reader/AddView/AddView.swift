@@ -3,7 +3,7 @@ import SwiftUI
 struct AddView: View {
     @EnvironmentObject var dataManager: DataManager
     @EnvironmentObject var appState: AppState
-    
+        
     @State var title = ""
     @State var author = ""
     @State var genre = ""
@@ -135,7 +135,7 @@ struct AddView: View {
                     )
                 }
                 
-                // Close the add view
+                // Dismiss the AddView sheet after saving
                 appState.isAddingBook = false
             }
         }

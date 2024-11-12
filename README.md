@@ -29,10 +29,11 @@ To install, follow these steps:
 
 - Right-click or control-click the app icon and select open.
 - If prompted with a security warning, confirm that you want to open the app from an 'unidentified developer.'
+- On macOS Sequoia, you may have to go to Settings>Privacy & Security and click on 'open anyway' for reader.app.
 
 ## Permissions
 
-reader requires network permissions to fetch book data from the Google Books API. This allows you to retrieve book details automatically, making it easier to add new books to your reading list.
+reader requires network permissions to check for updates and to fetch book data from the Google Books API. This allows you to retrieve book details automatically, making it easier to add new books to your reading list. It also requires user-selected files to read/write to replace the older version of the app with the newer version.
 
 ## Contributing
 

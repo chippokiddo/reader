@@ -74,7 +74,7 @@ func replaceAppBundle(with newAppURL: URL) throws {
 @MainActor
 func relaunchApp(at appURL: URL) throws {
     let process = Process()
-    process.executableURL = appURL.appendingPathComponent("Contents/MacOS/YourAppExecutableName") // Replace with the actual executable name
+    process.executableURL = appURL.appendingPathComponent("Contents/MacOS/reader")
     try process.run()
     NSApp.terminate(nil)
 }

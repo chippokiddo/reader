@@ -89,20 +89,17 @@ func checkForUpdates() {
             if currentVersion != latestVersion {
                 print("Update available!")
                 
-                // Step 1: Prompt the user
                 let userWantsToUpdate = await promptForUpdate(latestVersion: latestVersion)
                 
                 if userWantsToUpdate {
-                    // Step 2: Download and install the update if the user agrees
                     print("User opted to update.")
                     
-                    // Step 3: Perform the update steps
                     let zipURL = try await downloadUpdate(from: downloadURL)
                     let tempDirectory = FileManager.default.temporaryDirectory
                     let unzipDestination = tempDirectory.appendingPathComponent("UpdatedApp")
                     try unzipFile(at: zipURL, to: unzipDestination)
                     
-                    let newAppURL = unzipDestination.appendingPathComponent("YourAppName.app") // Replace with your app's name
+                    let newAppURL = unzipDestination.appendingPathComponent("reader.app")
                     try replaceAppBundle(with: newAppURL)
                     
                     // Relaunch the app on the main thread without await
@@ -124,8 +121,8 @@ func checkForUpdates() {
 @MainActor
 func promptForUpdate(latestVersion: String) async -> Bool {
     let alert = NSAlert()
-    alert.messageText = "New Version Available"
-    alert.informativeText = "Version \(latestVersion) is available. Would you like to update?"
+    alert.messageText = "New Update Available"
+    alert.informativeText = "reader \(latestVersion) is available. Would you like to update?"
     alert.alertStyle = .informational
     alert.addButton(withTitle: "Update")
     alert.addButton(withTitle: "Cancel")

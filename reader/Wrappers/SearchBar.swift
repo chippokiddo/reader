@@ -19,6 +19,7 @@ struct SearchBar: NSViewRepresentable {
         return searchField
     }
 
+    @MainActor
     func updateNSView(_ nsView: NSSearchField, context: Context) {
         if nsView.stringValue != text {
             nsView.stringValue = text
@@ -29,6 +30,7 @@ struct SearchBar: NSViewRepresentable {
         Coordinator(self)
     }
 
+    @MainActor
     class Coordinator: NSObject {
         var parent: SearchBar
 

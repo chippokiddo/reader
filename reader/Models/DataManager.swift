@@ -23,50 +23,44 @@ final class DataManager: ObservableObject {
         }
     }
     
-    func fetchBookData(title: String, author: String, publishedDate: String, completion: @escaping (BookData?) -> Void) {
+    func fetchBookData(title: String, author: String, publishedDate: String) async -> BookData? {
         let query = "intitle:\(title) inauthor:\(author)"
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "https://www.googleapis.com/books/v1/volumes?q=\(encodedQuery)&key=\(apiKey)") else {
-            completion(nil)
-            return
+            return nil
         }
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                completion(nil)
-                return
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let result = try JSONDecoder().decode(GoogleBooksResponse.self, from: data)
+            if let matchedBook = result.items.first(where: { $0.volumeInfo.publishedDate.contains(publishedDate) }) {
+                let bookInfo = matchedBook.volumeInfo
+                
+                // Extract ISBN if available
+                let isbn = bookInfo.industryIdentifiers?.first(where: { $0.type == "ISBN_13" || $0.type == "ISBN_10" })?.identifier
+                
+                // Extract series if available (usually stored in subtitle or custom series property)
+                let series = bookInfo.subtitle ?? bookInfo.series
+                
+                // Create and return a new BookData instance
+                return BookData(
+                    title: bookInfo.title,
+                    author: bookInfo.authors?.joined(separator: ", ") ?? "",
+                    published: DateFormatter().date(from: publishedDate) ?? Date(),
+                    publisher: bookInfo.publisher,
+                    genre: bookInfo.categories?.first,
+                    series: series,
+                    isbn: isbn,
+                    bookDescription: bookInfo.description,
+                    status: .unread
+                )
+            } else {
+                return nil
             }
-            do {
-                let result = try JSONDecoder().decode(GoogleBooksResponse.self, from: data)
-                if let matchedBook = result.items.first(where: { $0.volumeInfo.publishedDate.contains(publishedDate) }) {
-                    let bookInfo = matchedBook.volumeInfo
-                    
-                    // Extract ISBN if available
-                    let isbn = bookInfo.industryIdentifiers?.first(where: { $0.type == "ISBN_13" || $0.type == "ISBN_10" })?.identifier
-                    
-                    // Extract series if available (usually stored in subtitle or custom series property)
-                    let series = bookInfo.subtitle ?? bookInfo.series  // Use `series` if the API provides it, otherwise try `subtitle`
-                    
-                    let newBook = BookData(
-                        title: bookInfo.title,
-                        author: bookInfo.authors?.joined(separator: ", ") ?? "",
-                        published: DateFormatter().date(from: publishedDate) ?? Date(),
-                        publisher: bookInfo.publisher,
-                        genre: bookInfo.categories?.first,
-                        series: series,
-                        isbn: isbn,
-                        bookDescription: bookInfo.description,
-                        status: .unread
-                    )
-                    completion(newBook)
-                } else {
-                    completion(nil)
-                }
-            } catch {
-                print("Failed to decode JSON: \(error)")
-                completion(nil)
-            }
-        }.resume()
+        } catch {
+            print("Failed to fetch or decode data: \(error)")
+            return nil
+        }
     }
 
     func addBook(

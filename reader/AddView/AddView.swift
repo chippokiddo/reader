@@ -75,33 +75,67 @@ struct AddView: View {
     
     func fetchAndAddBook() {
         guard let published = published else { return }
+        
+        // Capture the necessary properties as constants to avoid capturing 'self' in the async closure
+        let capturedTitle = title
+        let capturedAuthor = author
+        let capturedGenre = genre
+        let capturedSeries = series
+        let capturedIsbn = isbn
+        let capturedPublisher = publisher
+        let capturedDescription = bookDescription
+
+        // Create a date formatter for the published date string
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
         let publishedDate = dateFormatter.string(from: published)
         
-        dataManager.fetchBookData(title: title, author: author, publishedDate: publishedDate) { book in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                if let book = book {
-                    // Populate fields from the fetched data, except for title
-                    self.author = book.author
-                    self.publisher = book.publisher ?? ""
-                    self.bookDescription = book.bookDescription ?? ""  // Leave empty if no description found
-                    self.genre = book.genre ?? ""
-                    self.series = book.series ?? ""
-                    self.isbn = book.isbn ?? ""
+        // Start the asynchronous task
+        Task {
+            // Perform the data fetch in a background context
+            let fetchedBook = await dataManager.fetchBookData(
+                title: capturedTitle,
+                author: capturedAuthor,
+                publishedDate: publishedDate
+            )
+            
+            // Switch to the main actor for UI updates and shared data
+            await MainActor.run {
+                if let book = fetchedBook {
+                    // Populate fields from fetched data if available
+                    let updatedAuthor = book.author.isEmpty ? capturedAuthor : book.author
+                    let updatedPublisher = book.publisher ?? capturedPublisher
+                    let updatedDescription = book.bookDescription ?? ""
+                    let updatedGenre = book.genre ?? capturedGenre
+                    let updatedSeries = book.series ?? capturedSeries
+                    let updatedIsbn = book.isbn ?? capturedIsbn
+                    
+                    // Add the book, using fetched data if available, otherwise using original values
+                    dataManager.addBook(
+                        title: capturedTitle,
+                        author: updatedAuthor,
+                        genre: updatedGenre,
+                        series: updatedSeries,
+                        isbn: updatedIsbn,
+                        publisher: updatedPublisher,
+                        published: published,
+                        description: updatedDescription
+                    )
+                } else {
+                    // Use original values if no fetched data is available
+                    dataManager.addBook(
+                        title: capturedTitle,
+                        author: capturedAuthor,
+                        genre: capturedGenre,
+                        series: capturedSeries,
+                        isbn: capturedIsbn,
+                        publisher: capturedPublisher,
+                        published: published,
+                        description: capturedDescription
+                    )
                 }
                 
-                // Add the book, using fetched data if available, otherwise using user input
-                dataManager.addBook(
-                    title: self.title,
-                    author: self.author.isEmpty ? author : self.author,  // Fall back to user input if needed
-                    genre: self.genre.isEmpty ? genre : self.genre,
-                    series: self.series.isEmpty ? series : self.series,
-                    isbn: self.isbn.isEmpty ? isbn : self.isbn,
-                    publisher: self.publisher.isEmpty ? publisher : self.publisher,
-                    published: published,
-                    description: self.bookDescription
-                )
+                // Close the add view
                 appState.isAddingBook = false
             }
         }

@@ -10,7 +10,6 @@ reader is a simple book-tracking app created in Swift for personal use and to sh
 ![Platform](https://img.shields.io/badge/platform-macOS-blue?style=flat-square)
 ![Requirements](https://img.shields.io/badge/requirements-macOS%2014%2B-fa4e49?style=flat-square)
 [![License](https://img.shields.io/github/license/chippokiddo/reader?style=flat-square)](LICENSE)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
 ## Features
 

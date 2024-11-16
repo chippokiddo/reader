@@ -33,7 +33,7 @@ struct NotesSection: View {
                 Spacer()
                 
                 Button(isEditing ? "Done" : "Edit") {
-                    isEditing.toggle()
+                    withAnimation { isEditing.toggle() }
                 }
                 .buttonStyle(LinkButtonStyle())
                 .disabled(book.status == .deleted)
@@ -68,11 +68,12 @@ struct NotesSection: View {
                                 }
 
                                 if isEditing {
-                                    Button(action: { removeNote(note) }) {
+                                    Button(action: { withAnimation { removeNote(note) } }) {
                                         Image(systemName: "minus.circle.fill")
                                             .foregroundColor(.red)
                                     }
                                     .buttonStyle(BorderlessButtonStyle())
+                                    .transition(.opacity)
                                 }
                             }
                         }
@@ -87,8 +88,9 @@ struct NotesSection: View {
 
                 if isAddingNote {
                     addNoteForm
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
                 } else {
-                    Button(action: { isAddingNote = true }) {
+                    Button(action: { withAnimation { isAddingNote = true } }) {
                         Label("Add Note", systemImage: "plus.circle")
                             .font(.callout)
                             .foregroundColor(.accentColor)
@@ -102,6 +104,7 @@ struct NotesSection: View {
         .padding(16)
         .background(Color(NSColor.windowBackgroundColor))
         .cornerRadius(12)
+        .animation(.easeInOut(duration: 0.25), value: isEditing)
     }
     
     // MARK: Note form
@@ -125,13 +128,13 @@ struct NotesSection: View {
 
             HStack {
                 Button("Cancel") {
-                    resetAddNoteForm()
+                    withAnimation { resetAddNoteForm() }
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.trailing, 6)
 
                 Button("Save") {
-                    saveNote()
+                    withAnimation { saveNote() }
                 }
                 .buttonStyle(DefaultButtonStyle())
                 .foregroundColor((newNote.isEmpty || newPageNumber.isEmpty) ? .gray : .accentColor)
